@@ -1,15 +1,14 @@
-public with sharing class AxasClientAPI {
+public with sharing class AxasClientAPIAX03 {
     // カスタム設定で登録しておく
-    String loginUrl = 'https://ndics--axas01.sandbox.my.salesforce.com/services/oauth2/token';
-    String consumer_key = '3MVG9e2mBbZnmM6n7P_kHFxxIOD1Xxx_DML6K7fp_N0cG3sbYywTwBoonhsC9ktfLCuBp_oBiMLLXCQvgsIo0';
-    String consumer_secret = 'BB97A1B76F7E7CF56E613EDE52DBD98EDEB466904DC9FA1D0F75F851B28AA784';
-    String userName = 'apiaxas01@ndics.co.jp.axas01';
+    String loginUrl = 'https://axas-si--ax03.sandbox.my.salesforce.com/services/oauth2/token';
+    String consumer_key = '3MVG9iLRabl2Tf4jUa3WiI_X.YhB2n5tfbr7B2KcaNhkpITU3ZaPZF9HXgom3Y6ZGeuzLKxv3iTarHBD4__RM';
+    String consumer_secret = 'C2F6BC46F228BBE6F7E22EB317965B82E3B546ADC463C36BD1EFC641F22AF8FA';
+    String userName = 'apitest@ax03.ndics.co.jp';
     String tokenId;
     HttpRequest req;
-    public AxasClientAPI() {
-        // setAccessToken();
+    public AxasClientAPIAX03() {
+        setAccessToken();
     }
-
     public void setLoginInfo(String url, String c_key, String c_secret, String uName) {
         this.loginUrl = url;
         this.consumer_key = c_key;
@@ -22,7 +21,7 @@ public with sharing class AxasClientAPI {
         tmp += 'client_id='+this.consumer_key;
         tmp += '&client_secret='+this.consumer_secret;
         tmp += '&username='+this.userName;
-        tmp += '&password=Ndics001KQ0wqKhmyHqLzue80nqTExf3';
+        tmp += '&password=Ndics001Qr1ZYGOTrgluiL7EgXxIsAyb';
         tmp += '&grant_type=password';
         System.debug('hosonuma'+tmp);
         return tmp;
@@ -39,10 +38,10 @@ public with sharing class AxasClientAPI {
         Map<String,Object> resBody = (Map<String,Object>) JSON.deserializeUntyped(res.getBody());
         // System.debug('hosonuma:'+resBody.get('access_token'));
         this.tokenId = (String) resBody.get('access_token');
-        User u = [SELECT Id, Name, AboutMe FROM User WHERE Id = :UserInfo.getUserId()];
-        System.debug(u);
-        u.AboutMe = tokenId;
-        Update u;
+        // User u = [SELECT Id, Name, AboutMe FROM User WHERE Id = :UserInfo.getUserId()];
+        // System.debug(u);
+        // u.AboutMe = tokenId;
+        // Update u;
         System.debug(tokenId);
         // getRequestObjの呼び出し
         // HttpResponse record = getRequestObj();
@@ -53,7 +52,7 @@ public with sharing class AxasClientAPI {
         this.req = new HttpRequest();
         req.setHeader('Authorization', authHeader);
         req.setHeader('Content-Type', 'application/json;charset=utf-8');
-        String u = 'https://ndics--axas01.sandbox.my.salesforce.com/services/data/v56.0/query/';
+        String u = 'https://axas-si--ax03.sandbox.my.salesforce.com/services/data/v57.0/query/';
         // String u = 'https://ndics--axas01.sandbox.my.salesforce.com/services/data/v56.0/query/?'+getAccounts();
         // String url = EncodingUtil.urlEncode(u, 'UTF-8');
         // req.setEndpoint('callout:Test/services/data/v57.0/');
@@ -74,5 +73,4 @@ public with sharing class AxasClientAPI {
         String body = 'q='+q;
         return body;
     }
-
 }

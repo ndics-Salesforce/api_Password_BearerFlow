@@ -4,9 +4,11 @@ public with sharing class AxasClientAPI2 {
     String consumer_key = System.label.consumer_key;
     String consumer_secret = System.label.consumer_secret;
     String userName = System.label.userName;
+    String tokenId;
     HttpRequest req;
 
     public AxasClientAPI2() {
+        setAccessToken();
     }
 
     public void setLoginInfo(String url, String c_key, String c_secret, String uName) {
@@ -36,12 +38,46 @@ public with sharing class AxasClientAPI2 {
         Http h = new Http();
         HttpResponse res = h.send(req);
         Map<String, Object> resBody = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
-        System.debug('hosonuma:'+resBody.get('access_token'));
+        this.tokenId = (String) resBody.get('access_token');
     }
 
+    public void getRequestObj() {
+        String authHeader = 'Bearer '+tokenId;
+        System.debug(tokenId);
+        this.req = new HttpRequest();
+        req.setHeader('Authorization', authHeader);
+        req.setHeader('Content-Type', 'application/json;charset=utf-8');
+        String url = 'https://ndics--axas01.sandbox.my.salesforce.com/services/data/v56.0/';
+        req.setEndpoint(url);
+        System.debug(url);
+        req.setBody(getAccounts());
+        req.setMethod('GET');
+        Http h = new Http();
+        HttpResponse res = h.send(req);
+        System.debug(res);
+        System.debug(res.getBody());
+    }
     // public void getRequestObj() {
-    //     String authHeader = 'Bearer ';
+    //     String authHeader = 'Bearer '+tokenId;
+    //     System.debug(tokenId);
     //     this.req = new HttpRequest();
     //     req.setHeader('Authorization', authHeader);
+    //     req.setHeader('Content-Type', 'application/json;charset=utf-8');
+    //     String url = 'https://ndics--axas01.sandbox.my.salesforce.com/services/data/v56.0/query/?'+getAccounts();
+    //     req.setEndpoint(url);
+    //     System.debug(url);
+    //     req.setBody(getAccounts());
+    //     req.setMethod('GET');
+    //     Http h = new Http();
+    //     HttpResponse res = h.send(req);
+    //     System.debug(res);
+    //     System.debug(res.getBody());
     // }
+
+    public String getAccounts() {
+        String q = 'SELECT Id, Name FROM Account LIMIT 2';
+        // String q = 'SELECT%20Id,%20Name%20FROM%20Account%20LIMIT%202';
+        String body = 'q='+q;
+        return body;
+    }
 }
